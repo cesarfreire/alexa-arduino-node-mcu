@@ -1,30 +1,34 @@
 #include <Arduino.h>
-#ifdef ESP32
-#include <WiFi.h>
-#define RELAY_PIN_1 12
-#define RELAY_PIN_2 14
-#else
+
+// Biblioteca WIFI do ESP8266
 #include <ESP8266WiFi.h>
-#define RELAY_PIN_1 D1
-#define RELAY_PIN_2 D2
-#endif
+
+// Biblioteca FAUXMOESP
 #include "fauxmoESP.h"
 
-#define SERIAL_BAUDRATE 115200
+// Define os pinos a serem ativados/desativados
+#define RELAY_PIN_1 D1
+#define RELAY_PIN_2 D2
 
-#define WIFI_SSID "LG House"
-#define WIFI_PASS "LG19931995"
+// Define Rate do serial
+#define SERIAL_RATE 9600
 
+// SSID e senha da rede WIFI
+#define WIFI_SSID "WIFI SSID"
+#define WIFI_PASS "WIFI PASSWD"
+
+// Define um nome para os dispositivos a serem conectados na Alexa
 #define LAMP_1 "LED 1"
 #define LAMP_2 "LED 2"
 
+// Cria o objeto da FAUXMOESP
 fauxmoESP fauxmo;
 
 
 // Wi-Fi Conexão
-void wifiSetup() {
+void configura_wifi() {
 
-  // Define o como STA
+  // Define o como STA (Station)
   WiFi.mode(WIFI_STA);
 
   // Conecta
@@ -39,18 +43,18 @@ void wifiSetup() {
   Serial.println();
 
   // Conectado
-  Serial.printf("[WIFI] STATION Mode, SSID: %s, IP address: %s\n", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
+  Serial.printf("[WIFI] Modo STATION, SSID: %s, endereço IP: %s\n", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
 }
 
 void setup() {
   // Inicia a Serial
-  Serial.begin(SERIAL_BAUDRATE);
+  Serial.begin(SERIAL_RATE);
   Serial.println();
 
   // Conexão Wi-Fi
-  wifiSetup();
+  configura_wifi();
 
-  // LED
+  // Define LEDs como saída e iniciam apagados
   pinMode(RELAY_PIN_1, OUTPUT);
   digitalWrite(RELAY_PIN_1, LOW);
 

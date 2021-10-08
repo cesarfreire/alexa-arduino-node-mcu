@@ -7,8 +7,8 @@
 #include "fauxmoESP.h"
 
 // Define os pinos a serem ativados/desativados
-#define RELAY_PIN_1 D1
-#define RELAY_PIN_2 D2
+#define PINO_LAMP_1 D1
+#define PINO_LAMP_2 D2
 
 // Define Rate do serial
 #define SERIAL_RATE 9600
@@ -18,8 +18,8 @@
 #define WIFI_PASS "WIFI PASSWD"
 
 // Define um nome para os dispositivos a serem conectados na Alexa
-#define LAMP_1 "LED 1"
-#define LAMP_2 "LED 2"
+#define LAMPADA_1 "LED 1"
+#define LAMPADA_2 "LED 2"
 
 // Cria o objeto da FAUXMOESP
 fauxmoESP fauxmo;
@@ -55,11 +55,11 @@ void setup() {
   configura_wifi();
 
   // Define LEDs como saída e iniciam apagados
-  pinMode(RELAY_PIN_1, OUTPUT);
-  digitalWrite(RELAY_PIN_1, LOW);
+  pinMode(PINO_LAMP_1, OUTPUT);
+  digitalWrite(PINO_LAMP_1, LOW);
 
-  pinMode(RELAY_PIN_2, OUTPUT);
-  digitalWrite(RELAY_PIN_2, LOW);
+  pinMode(PINO_LAMP_2, OUTPUT);
+  digitalWrite(PINO_LAMP_2, LOW);
 
   // Por padrão, fauxmoESP cria seu próprio servidor web na porta definida
   // A porta TCP deve ser 80 para dispositivos gen3 (o padrão é 1901)
@@ -76,31 +76,29 @@ void setup() {
   // "Alexa, ligar LED um"
 
   // Adiciona os dispositivos
-  fauxmo.addDevice(LAMP_1);
-  fauxmo.addDevice(LAMP_2);
+  fauxmo.addDevice(LAMPADA_1);
+  fauxmo.addDevice(LAMPADA_2);
 
   fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
     // Retorno de chamada quando um comando da Alexa é recebido.
     // Você pode usar device_id ou device_name para escolher o elemento no qual realizar uma ação (relé, LED, ...)
     // O state é um booleano (ON / OFF) e value um número de 0 a 255 (se você disser "definir a luz da cozinha para 50%", receberá 128 aqui).
 
-    Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
-    if ( (strcmp(device_name, LAMP_1) == 0) ) {
-      Serial.println("RELAY 1 switched by Alexa");
-      //digitalWrite(RELAY_PIN_1, !digitalRead(RELAY_PIN_1));
+    Serial.printf("[MAIN] Dispositivo #%d (%s) estado: %s valor: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
+    if ( (strcmp(device_name, LAMPADA_1) == 0) ) {
+      Serial.println("Lampada 1 alterada pela Alexa");
       if (state) {
-        digitalWrite(RELAY_PIN_1, HIGH);
+        digitalWrite(PINO_LAMP_1, HIGH);
       } else {
-        digitalWrite(RELAY_PIN_1, LOW);
+        digitalWrite(PINO_LAMP_1, LOW);
       }
     }
-    if ( (strcmp(device_name, LAMP_2) == 0) ) {
-      // this just sets a variable that the main loop() does something about
-      Serial.println("RELAY 2 switched by Alexa");
+    if ( (strcmp(device_name, LAMPADA_2) == 0) ) {
+      Serial.println("Lampada 2 alterada pela Alexa");
       if (state) {
-        digitalWrite(RELAY_PIN_2, HIGH);
+        digitalWrite(PINO_LAMP_2, HIGH);
       } else {
-        digitalWrite(RELAY_PIN_2, LOW);
+        digitalWrite(PINO_LAMP_2, LOW);
       }
     }
   });
@@ -112,6 +110,7 @@ void loop() {
   // Portanto, temos que pesquisar manualmente os pacotes UDP
   fauxmo.handle();
 
+  // Imprime o freeheap a casa 5 segundos
   static unsigned long last = millis();
   if (millis() - last > 5000) {
     last = millis();

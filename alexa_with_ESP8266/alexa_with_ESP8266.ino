@@ -106,13 +106,13 @@ void setup() {
 }
 
 void loop() {
-  // fauxmoESP usa um servidor TCP assíncrono, mas um servidor UDP sincronizado
+  // fauxmoESP usa um servidor TCP assíncrono, mais um servidor UDP sincronizado
   // Portanto, temos que pesquisar manualmente os pacotes UDP
   fauxmo.handle();
 
-  // Imprime o freeheap a casa 5 segundos
+  // Imprime o freeheap a cada 6 segundos
   static unsigned long last = millis();
-  if (millis() - last > 5000) {
+  if (millis() - last > 6000) {
     last = millis();
     Serial.printf("[MAIN] Free heap: %d bytes\n", ESP.getFreeHeap());
   }
